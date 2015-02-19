@@ -1,7 +1,7 @@
 function [runtime] = BFS(p)
 tic
 
-Puzzle = [1 2 3 4 5 6 7 8 9];
+Puzzle = [5 1 8 9 2 3 4 6 7];
 if (isSolvable(Puzzle) == 0)
     disp('INVALID PUZZLE');
     return
@@ -101,7 +101,7 @@ queue(1, :) = [];
 
 function [isSolvable] = isSolvable(state)
 isSolvable = 0;
-state(state==9)=0;
+%state(state==9)=0;
 for i = 1:9
     for j = 1:9
         if (j > i)
