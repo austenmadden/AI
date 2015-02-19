@@ -16,6 +16,7 @@ while (isempty(Q) == 0)
     goalState = checkState(current);
     if (goalState == 1)
         runtime = toc;
+        disp(current);
         return
     end
     blankIndex = findBlank(current);
@@ -24,6 +25,7 @@ while (isempty(Q) == 0)
     
     if (validMoves(1) == 1)
             next = current;
+            disp(validMoves);
             next([blankIndex (blankIndex-3)]) = next([(blankIndex-3) blankIndex]);
             isInS = (S == next);
             if (sum(isInS) == 0)
@@ -76,8 +78,9 @@ queue(1, :) = [];
 
 function [isGoalState] = checkState(state)
 isGoalState = 1;
+
 for i = 1:8
-   if ((state(i+1) - state(i)) > 1)
+   if ((state(i+1) - state(i)) ~= 1)
        isGoalState = 0;
        return
    end
@@ -97,7 +100,8 @@ end
 function [validMoves] = findValidMoves(index)
 %Is up a valid move?
 validMoves = [1 1 1 1];
-if (index > 3 )
+
+if (index < 3 )
    validMoves(1) = 0;
 end
 %Is down a valid move?

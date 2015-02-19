@@ -1,24 +1,22 @@
-
-
-
 function [runtime] = BFS(p)
 tic
 
-Puzzle = p;
+Puzzle = [9 2 3 4 5 6 7 8 1];
 
-Q (:,9) = [];
+%Q (1,:) = [];
 
-S (:,9) = [];
+%S (1,:) = [];
 
 S(1,:) = Puzzle;
 
 Q(1,:) = Puzzle;
 
-while (isEmpty(Q) == 0)
-    current = dequeue(q);
+while (isempty(Q) == 0)
+    current = dequeue(Q);
     goalState = checkState(current);
     if (goalState == 1)
         runtime = toc;
+        disp(current);
         return
     end
     blankIndex = findBlank(current);
@@ -74,13 +72,17 @@ function [queue] = enqueue(queue, value)
 queue(end+1, :) = value;
 
 function [value] = dequeue(queue)
-value = queue(1);
+value = queue(1,:);
 queue(1, :) = [];
 
 function [isGoalState] = checkState(state)
 isGoalState = 1;
+
 for i = 1:8
+    disp(state(
    if ((state(i+1) - state(i)) > 1)
+       disp(state(i+1));
+       disp(state(i));
        isGoalState = 0;
        return
    end
