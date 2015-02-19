@@ -1,7 +1,7 @@
 function [runtime] = BFS(p)
 tic
 
-Puzzle = [1 2 3 4 5 6 7 8 9];
+Puzzle = [1 2 3 4 5 6 7 9 8];
 
 %Q (1,:) = [];
 
@@ -12,73 +12,107 @@ S(1,:) = Puzzle;
 Q(1,:) = Puzzle;
 
 while (isempty(Q) == 0)
-    current = dequeue(Q);
+    [current, Q] = dequeue(Q);
     goalState = checkState(current);
     if (goalState == 1)
         runtime = toc;
-        disp(current);
+        disp(runtime);
         return
     end
     blankIndex = findBlank(current);
     validMoves = findValidMoves(blankIndex);
-    
-    
+    sLength = numel(S)/9;
+    isInS =0;
     if (validMoves(1) == 1)
             next = current;
-            disp(validMoves);
             next([blankIndex (blankIndex-3)]) = next([(blankIndex-3) blankIndex]);
-            isInS = (S == next);
-            if (sum(isInS) == 0)
+
+            for (i = 1:sLength)
+                if((S(i,:) == next) == 9)
+                   isInS = 1; 
+                end
+            end 
+            if (isInS  == 0)
                 S(end+1, :) = next;
                 
                 Q = enqueue(Q, next); 
             end
+            isInS = 0;
     end
-    
-    if (validMoves(1) == 2)
+
+    if (validMoves(2) == 1)
             next = current;
             next([blankIndex (blankIndex+3)]) = next([(blankIndex+3) blankIndex]);
-            isInS = (S == next);
-            if (sum(isInS) == 0)
+            for (i = 1:sLength)
+                if((S(i,:) == next) == 9)
+                   isInS = 1; 
+                end
+            end
+            if (isInS  == 0)
                 S(end+1, :) = next;
                 
                 Q = enqueue(Q, next); 
             end
+            isInS = 0; 
     end
     
-    if (validMoves(1) == 3)
+    if (validMoves(3) == 1)
             next = current;
             next([blankIndex (blankIndex-1)]) = next([(blankIndex-1) blankIndex]);
-            isInS = (S == next);
-            if (sum(isInS) == 0)
+            for (i = 1:sLength)
+                if((S(i,:) == next) == 9)
+                   isInS = 1; 
+                end
+            end;
+            if (isInS  == 0)
                 S(end+1, :) = next;
                 
                 Q = enqueue(Q, next); 
             end
+            isInS = 0;
+    
     end
     
-    if (validMoves(1) == 4)
+    if (validMoves(4) == 1)
             next = current;
             next([blankIndex (blankIndex+1)]) = next([(blankIndex+1) blankIndex]);
-            isInS = (S == next);
-            if (sum(isInS) == 0)
+            for (i = 1:sLength)
+                if((S(i,:) == next) == 9)
+                   isInS = 1; 
+                end
+            end
+            if (isInS == 0)
                 S(end+1, :) = next;
                 
                 Q = enqueue(Q, next); 
             end
-    end    
+            isInS = 0;
+    end
+    %disp(Q);
 end
+
 
 function [queue] = enqueue(queue, value) 
 queue(end+1, :) = value;
 
-function [value] = dequeue(queue)
+function [value queue] = dequeue(queue)
 value = queue(1,:);
 queue(1, :) = [];
 
+function [isGoalState] = isSolvable(state)
+isSolvable = 1;
+
+for i = 1:9
+   if ()
+       isGoalState = 0;
+       return
+   end
+    
+end
+
 function [isGoalState] = checkState(state)
 isGoalState = 1;
-
+state(State==9)=0;
 for i = 1:8
    if ((state(i+1) - state(i)) ~= 1)
        isGoalState = 0;
@@ -100,12 +134,11 @@ end
 function [validMoves] = findValidMoves(index)
 %Is up a valid move?
 validMoves = [1 1 1 1];
-
-if (index < 3 )
+if (index <= 3 )
    validMoves(1) = 0;
 end
 %Is down a valid move?
-if (index < 7 )
+if (index >= 7 )
    validMoves(2) = 0;
 end
 %Is left a valid move?
@@ -116,4 +149,4 @@ end
 if (mod((index),3) == 0)
    validMoves(4) = 0;
 end
-
+disp(validMoves);
