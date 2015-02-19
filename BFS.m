@@ -1,14 +1,11 @@
 function [runtime] = BFS(p)
 tic
 
-Puzzle = [9 1 2 3 4 5 6 7 8];
-if (isSolvable(Puzzle) == 0) 
+Puzzle = [1 2 3 4 5 6 7 8 9];
+if (isSolvable(Puzzle) == 0)
     disp('INVALID PUZZLE');
     return
 end
-%Q (1,:) = [];
-
-%S (1,:) = [];
 
 S(1,:) = Puzzle;
 
@@ -20,6 +17,7 @@ while (isempty(Q) == 0)
     if (goalState == 1)
         runtime = toc;
         disp(runtime);
+        disp(current);
         return
     end
     blankIndex = findBlank(current);
@@ -91,7 +89,6 @@ while (isempty(Q) == 0)
             end
             isInS = 0;
     end
-    disp(Q);
 end
 
 
@@ -114,7 +111,7 @@ for i = 1:9
         end
     end
 end
-
+disp(isSolvable);
     if (mod(isSolvable,2) == 0)
         isSolvable = 1;
         return
