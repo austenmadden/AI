@@ -1,8 +1,11 @@
 function [runtime] = BFS(p)
 tic
 
-Puzzle = [1 2 3 4 5 6 7 9 8];
-
+Puzzle = [9 1 2 3 4 5 6 7 8];
+if (isSolvable(Puzzle) == 0) 
+    disp('INVALID PUZZLE');
+    return
+end
 %Q (1,:) = [];
 
 %S (1,:) = [];
@@ -88,7 +91,7 @@ while (isempty(Q) == 0)
             end
             isInS = 0;
     end
-    %disp(Q);
+    disp(Q);
 end
 
 
@@ -99,20 +102,28 @@ function [value queue] = dequeue(queue)
 value = queue(1,:);
 queue(1, :) = [];
 
-function [isGoalState] = isSolvable(state)
-isSolvable = 1;
-
+function [isSolvable] = isSolvable(state)
+isSolvable = 0;
+state(state==9)=0;
 for i = 1:9
-   if ()
-       isGoalState = 0;
-       return
-   end
-    
+    for j = 1:9
+        if (j > i)
+            if (state(i) > state(j))
+                isSolvable = isSolvable + 1;
+            end
+        end
+    end
 end
+
+    if (mod(isSolvable,2) == 0)
+        isSolvable = 1;
+        return
+    end
+    isSolvable = 0;
+
 
 function [isGoalState] = checkState(state)
 isGoalState = 1;
-state(State==9)=0;
 for i = 1:8
    if ((state(i+1) - state(i)) ~= 1)
        isGoalState = 0;
@@ -149,4 +160,3 @@ end
 if (mod((index),3) == 0)
    validMoves(4) = 0;
 end
-disp(validMoves);
