@@ -1,7 +1,8 @@
 function [runtime] = BFS(p)
 tic
 
-Puzzle = [2 3 6 9 1 5 4 7 8];
+Puzzle = uint8(p);
+
 if (isSolvable(Puzzle) == 0)
     disp('INVALID PUZZLE');
     return

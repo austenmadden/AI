@@ -1,7 +1,7 @@
 function [runtime] = AStar(p)
 tic
 
-Puzzle = [2 3 6 4 1 5 9 7 8];
+Puzzle = uint8(p);
 if (isSolvable(Puzzle) == 0)
     disp('INVALID PUZZLE');
     return
@@ -11,10 +11,11 @@ end
 
 g = 0;
 
-f = g + sum(findh(Puzzle));
-CameFrom(1,:) = double.empty(1,0);
-state = struct('state',Puzzle,'gScore',g,'h',sum(findh(Puzzle)),'cameFrom',CameFrom);
-initial = struct('state',[],'gScore',0,'h',0, 'cameFrom', []);
+f = g + sum(findH2(Puzzle));
+CameFrom(1,:) = uint8([0 0 0 0 0 0 0 0 0]);
+state = struct('state',Puzzle,'gScore',g,'hScore',sum(findH2(Puzzle)),'fScore',f,'cameFrom',CameFrom);
+initial = struct('state',CameFrom,'gScore',0,'hScore',0,'fScore',0,'cameFrom',CameFrom);
+
 OpenSet(1) = state;
 ClosedSet(1) = initial;
 
@@ -22,12 +23,12 @@ ClosedSet(1) = initial;
 current = OpenSet(1);
 while (isempty(OpenSet) == 0)
     for i = 1:length(OpenSet)
-        if ((current.gScore + current.h) >= (current.gScore + OpenSet(i).h))
+        if (current.fScore >= OpenSet(i).fScore)
             current = OpenSet(i);
         end
     end
-    disp(current.h);
-    disp(current.state);
+    ClosedSet(end+1) = current;
+    
     goalState = checkState(current.state);
     if (goalState == 1)
         runtime = toc;
@@ -39,17 +40,8 @@ while (isempty(OpenSet) == 0)
         return
     end
     
-   
-    if length(OpenSet) ~= 0
-        for i = 1:length(OpenSet)
-            if (isequal(OpenSet(i),current))
-                disp(OpenSet(i));
-                 OpenSet(i) = [];
-                 break
-            end
-        end
-    end
-    ClosedSet(end+1) = current;
+
+
     blankIndex = findBlank(current.state);
     validMoves = findValidMoves(blankIndex);
     
@@ -59,64 +51,128 @@ while (isempty(OpenSet) == 0)
     if (validMoves(1) == 1)
             next = current;
             next.state([blankIndex (blankIndex-3)]) = next.state([(blankIndex-3) blankIndex]);
-            OpenSet = handleNextState(current, next, OpenSet, ClosedSet);
-
+            
+            closedSetLength = length(ClosedSet);
+            isInClosedSet = 0;
+            for i = 1:closedSetLength
+                if (isequal(ClosedSet(i).state,next.state))
+                    isInClosedSet = 1;
+                end
+            end
+            
+            if (isInClosedSet == 0)
+                OpenSet = handleNextState(current, next, OpenSet, ClosedSet);
+            end
     end
 
     if (validMoves(2) == 1)
             next = current;
             next.state([blankIndex (blankIndex+3)]) = next.state([(blankIndex+3) blankIndex]);
-            OpenSet = handleNextState(current, next, OpenSet, ClosedSet);
+            
+            closedSetLength = length(ClosedSet);
+            isInClosedSet = 0;
+            for i = 1:closedSetLength
+                if (isequal(ClosedSet(i).state,next.state))
+                    isInClosedSet = 1;
+                end
+            end
+            
+            if (isInClosedSet == 0)
+                OpenSet = handleNextState(current, next, OpenSet, ClosedSet);
+            end
 
     end
     
     if (validMoves(3) == 1)
             next = current;
             next.state([blankIndex (blankIndex-1)]) = next.state([(blankIndex-1) blankIndex]);
-            OpenSet = handleNextState(current, next, OpenSet, ClosedSet);
+            
+            closedSetLength = length(ClosedSet);
+            isInClosedSet = 0;
+            for i = 1:closedSetLength
+                if (isequal(ClosedSet(i).state,next.state))
+                    isInClosedSet = 1;
+                end
+            end
+            
+            if (isInClosedSet == 0)
+                OpenSet = handleNextState(current, next, OpenSet, ClosedSet);
+            end
 
     end
     
     if (validMoves(4) == 1)
             next = current;
             next.state([blankIndex (blankIndex+1)]) = next.state([(blankIndex+1) blankIndex]);
-            OpenSet = handleNextState(current, next, OpenSet, ClosedSet);
-
+            
+            closedSetLength = length(ClosedSet);
+            isInClosedSet = 0;
+            for i = 1:closedSetLength
+                if (isequal(ClosedSet(i).state,next.state))
+                    isInClosedSet = 1;
+                end
+            end
+            
+            if (isInClosedSet == 0)
+                OpenSet = handleNextState(current, next, OpenSet, ClosedSet);
+            end
     end
-  
+    disp(current.cameFrom);
 end
 
 function [OpenSet] = handleNextState(current, next, OpenSet, ClosedSet)
-next.h = sum(findh(next.state));
+next.hScore = sum(findH2(next.state));
 next.gScore = next.gScore + 1;
-next.cameFrom = current.state;
-closedSetLength = length(ClosedSet);
-isInClosedSet = 0;
-for i = 1:closedSetLength
-    if (isequal(ClosedSet(i),next))
-        isInClosedSet = 1;
+next.fScore = next.gScore + next.hScore;
+next.cameFrom(end+1,:) = current.state;
+
+
+openSetLength = length(OpenSet);
+isInOpenSet = 0;
+for i = 1:openSetLength
+    if (isequal(OpenSet(i).state,next.state))
+        if (next.gScore < OpenSet(i).gScore)
+            OpenSet(i).gScore = next.gScore;
+            OpenSet(i).cameFrom = next.cameFrom;
+            OpenSet(i).fScore = next.fScore;
+        end
+        isInOpenSet = 1;
     end
 end
- if (isInClosedSet == 0)
-    openSetLength = length(OpenSet);
-    isInOpenSet = 0;
-    for i = 1:openSetLength
-        if (isequal(OpenSet(i).state,next.state))
-            isInOpenSet = 1;
-        end
-    end
 
-    if (isInOpenSet == 0)
-        next.cameFrom(end+1,:) = current.state;
-        OpenSet(end+1) = next; 
-    end
- end
 
-function [h] = findh(state)
+
+if (isInOpenSet == 0)
+    OpenSet(end+1) = next; 
+end
+
+
+function [h] = findH1(state)
 h = 0;
 for n = 1:9
     if ((state(n) ~= n))
         h = h + 1;
+    end
+end
+
+function [h] = findH2(state)
+h = 0;
+state(state==9)=0;
+state = [state(1) state(2) state(3);
+         state(4) state(5) state(6);
+         state(7) state(8) state(9)];
+     
+goalSt = [1 2 3;
+          4 5 6;
+          7 8 0];
+
+for lineIn = 1:3
+    for colIn = 1:3
+        tileIn = state(lineIn , colIn);
+        if tileIn > 0
+            [lineGoal , colGoal] = find (goalSt == tileIn);
+            h = h + abs(lineIn - lineGoal) + abs (colIn - colGoal);
+        end
     end
 end
 
