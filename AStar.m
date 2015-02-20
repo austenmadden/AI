@@ -1,7 +1,7 @@
 function [runtime] = AStar(p)
 tic
 
-Puzzle = [2 3 6 1 5 9 4 7 8];
+Puzzle = [2 3 6 4 1 5 9 7 8];
 if (isSolvable(Puzzle) == 0)
     disp('INVALID PUZZLE');
     return
@@ -39,15 +39,17 @@ while (isempty(OpenSet) == 0)
         return
     end
     
-    ClosedSet(end+1) = current;
+   
     if length(OpenSet) ~= 0
         for i = 1:length(OpenSet)
             if (isequal(OpenSet(i),current))
+                disp(OpenSet(i));
                  OpenSet(i) = [];
                  break
             end
         end
     end
+    ClosedSet(end+1) = current;
     blankIndex = findBlank(current.state);
     validMoves = findValidMoves(blankIndex);
     
@@ -108,9 +110,6 @@ end
         next.cameFrom(end+1,:) = current.state;
         OpenSet(end+1) = next; 
     end
-        for (i = 1:length(OpenSet))
-            
-        end
  end
 
 function [h] = findh(state)
