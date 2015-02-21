@@ -1,7 +1,8 @@
 function [runtime] = AStar(p)
+%Austen Madden
 tic
-
-Puzzle = uint8(p);
+Puzzle = (p);
+Puzzle = uint8(Puzzle);
 if (isSolvable(Puzzle) == 0)
     disp('INVALID PUZZLE');
     return
@@ -22,6 +23,11 @@ ClosedSet(1) = initial;
 
 current = OpenSet(1);
 while (isempty(OpenSet) == 0)
+    check = toc;
+    if (check > 120)
+        runtime = check;
+       return 
+    end
     for i = 1:length(OpenSet)
         if (current.fScore >= OpenSet(i).fScore)
             current = OpenSet(i);
@@ -117,7 +123,7 @@ while (isempty(OpenSet) == 0)
                 OpenSet = handleNextState(current, next, OpenSet, ClosedSet);
             end
     end
-    disp(current.cameFrom);
+    disp(current.state);
 end
 
 function [OpenSet] = handleNextState(current, next, OpenSet, ClosedSet)

@@ -1,8 +1,9 @@
 function [runtime] = BFS(p)
+%Austen Madden
 tic
 
-Puzzle = uint8(p);
-
+Puzzle = (p);
+Puzzle = uint8(Puzzle);
 if (isSolvable(Puzzle) == 0)
     disp('INVALID PUZZLE');
     return
@@ -13,6 +14,11 @@ S(1,:) = Puzzle;
 Q(1,:) = Puzzle;
 
 while (isempty(Q) == 0)
+    check = toc;
+    if (check > 300) % If it runs longer than 5 minutes just returns
+        runtime = check;
+        return 
+    end
     [current, Q] = dequeue(Q);
     goalState = checkState(current);
     if (goalState == 1)
